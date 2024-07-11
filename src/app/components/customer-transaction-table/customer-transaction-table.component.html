@@ -1,1 +1,21 @@
-<p>customer-transaction-table works!</p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Transaction Date</th>
+      <th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let customer of customers">
+      <td>{{ customer.name }}</td>
+      <td>
+        <ul>
+          <li *ngFor="let transaction of transactions | filterByCustomerId: customer.id">
+            {{ transaction.date | date }} - ${{ transaction.amount }}
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
