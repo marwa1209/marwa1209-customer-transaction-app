@@ -1,43 +1,51 @@
-<div class="container my-5"
-  *ngIf="customers && customers.length > 0 && transactions && transactions.length > 0; else noData">
-  <div class="mb-3 d-flex gap-2">
-    <input type="text" class="form-control w-50" placeholder="Filter by customer name" [(ngModel)]="nameFilter">
-    <input type="number" class="form-control w-50" placeholder="Filter by transaction amount"
-      [(ngModel)]="amountFilter">
+<div>
+  <h1 class="text-center my-4">Customer Transaction Table</h1>
+  <div class="container my-5" *ngIf="customers.length > 0 && transactions.length > 0; else noData">
+    <div class="mb-4 d-flex gap-2">
+      <input type="text" class="form-control w-50" placeholder="Filter by customer name" [(ngModel)]="nameFilter">
+      <input type="number" class="form-control w-50" placeholder="Filter by transaction amount"
+        [(ngModel)]="amountFilter">
+    </div>
+    <ng-container
+      *ngIf="(customers | filterByName: nameFilter | filterByAmount: transactions: amountFilter).length > 0; else noData">
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Transaction Date</th>
+            <th>Amount</th>
+            <th>Transaction Amount per Day</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let customer of customers | filterByName: nameFilter | filterByAmount: transactions: amountFilter">
+            <td>{{ customer.name }}</td>
+            <td>
+              <ul>
+                <li *ngFor="let transaction of transactions | customerTransactions:customer.id">
+                  {{ transaction.date | date }}
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li class="mb-2" *ngFor="let transaction of transactions | customerTransactions:customer.id">
+                  {{ transaction.amount | currency }}
+                </li>
+              </ul>
+            </td>
+            <td>
+              <button type="button" class="btn btn-success" (click)="selectCustomer(customer.id)">View graph</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+    <h1 class="text-center mt-5">Transaction Graph</h1>
+    <app-transaction-graph  [transactions]="transactions" [customerId]="selectedCustomer"></app-transaction-graph>
   </div>
-  <ng-container
-    *ngIf="(customers | filterByName: nameFilter | filterByAmount: transactions: amountFilter).length > 0; else noData">
-    <table class="table table-dark table-striped">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Transaction Date</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let customer of customers | filterByName: nameFilter | filterByAmount: transactions: amountFilter">
-          <td>{{ customer.name }}</td>
-          <td>
-            <ul>
-              <li *ngFor="let transaction of transactions | customerTransactions:customer.id">
-                {{ transaction.date | date }}
-              </li>
-            </ul>
-          </td>
-          <td>
-            <ul>
-              <li *ngFor="let transaction of transactions | customerTransactions:customer.id">
-                ${{ transaction.amount }}
-              </li>
-            </ul>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </ng-container>
 </div>
-
 <ng-template #noData>
   <div class="container bg-black rounded-2 my-5 justify-content-center align-items-center p-3 text-white">
     <p *ngIf="nameFilter && amountFilter">No customer found with transactions totaling '{{ amountFilter }}' and name '{{
@@ -47,4 +55,3 @@
     </p>
     <p *ngIf="!nameFilter && !amountFilter">No data available.</p>
   </div>
-</ng-template>
