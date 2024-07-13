@@ -1,6 +1,6 @@
 <div>
   <h1 class="text-center my-4">Customer Transaction Table</h1>
-  <div class="container my-5" *ngIf="customers.length > 0 && transactions.length > 0; else noData">
+  <div *ngIf="customers.length > 0 && transactions.length > 0; else noData">
     <div class="mb-4 d-flex gap-2">
       <input type="text" class="form-control w-50" placeholder="Filter by customer name" [(ngModel)]="nameFilter">
       <input type="number" class="form-control w-50" placeholder="Filter by transaction amount"
